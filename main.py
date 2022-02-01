@@ -32,14 +32,18 @@ driver.quit()
 table = pd.DataFrame()
 table['Name'] = p_names
 table['URL'] = p_urls
-table.to_csv('data/program-list.csv')
+table.to_csv('data/program-list.csv', index=False)
 
 
 #%%
 # STEP 2: Data Extraction 2
+# Read csv file and retrieve program information for each program
+
+df = pd.read_csv('data/program-list.csv')
+df
 
 
 
 
 
-
+# %%
