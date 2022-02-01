@@ -7,12 +7,12 @@ from bs4 import BeautifulSoup
 from lxml import html
 
 
-# %%
-# STEP 1: Data Extraction 1
+# %% STEP 1: Data Extraction 1
 # Save program name and its url
 
 # Download webdriver for a browser and add its path
 driver = webdriver.Chrome(executable_path='/Users/alp/Desktop/chromedriver')
+(driver.page_source).encode('utf-8')
 driver.get('https://bugcrowd.com/programs')
 
 # After inspecting the website, the elements with the class name: bc-panel__title contain name and urls of the programs
@@ -25,8 +25,6 @@ for item in panel_titles:
     p_names.append(item.text)
     p_urls.append(item.find_element_by_css_selector('a').get_attribute('href'))
 
-
-
 # Add names and urls to a dataframe and convert to csv
 table = pd.DataFrame()
 table['name'] = p_names
@@ -34,23 +32,46 @@ table['url'] = p_urls
 table.to_csv('data/program-list.csv', index=False)
 
 
-#%%
-# STEP 2: Data Extraction 2
+#%% STEP 2: Data Extraction 2
 # Read csv file and retrieve program information for each program
 
 df = pd.read_csv('data/program-list.csv') # read again to comply with the task
 
-info_dict = dict()
+info_dict = dict() # Keep the info as a dictionary to see corresponding program name for convenience
 
 for index, row in df.iterrows():
     driver.get(row['url']) # Go to url of the program
 
+    # In case the url does not have 'Program Details' tab, fill as empty string
     try:
         info = driver.find_element_by_class_name('bounty-content')
         info_dict[row['name']] = info.text
     except:
         info = ''
         info_dict[row['name']] = info
+
+#%% STEP 3: Data Analysis
+# Read program information and extract min and max dollar amounts. 
+
+import re
+
+
+for key in info_dict:
+    print(key)
+    dollars = [x[0] for x in re.findall('(\$[0-9]+(\,[0-9]+)?)', info_dict[key])]
+    print(dollars)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #%%
