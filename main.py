@@ -26,12 +26,11 @@ for item in panel_titles:
     p_urls.append(item.find_element_by_css_selector('a').get_attribute('href'))
 
 
-driver.quit()
 
 # Add names and urls to a dataframe and convert to csv
 table = pd.DataFrame()
-table['Name'] = p_names
-table['URL'] = p_urls
+table['name'] = p_names
+table['url'] = p_urls
 table.to_csv('data/program-list.csv', index=False)
 
 
@@ -39,9 +38,24 @@ table.to_csv('data/program-list.csv', index=False)
 # STEP 2: Data Extraction 2
 # Read csv file and retrieve program information for each program
 
-df = pd.read_csv('data/program-list.csv')
-df
+df = pd.read_csv('data/program-list.csv') # read again to comply with the task
 
+info_dict = dict()
+
+for index, row in df.iterrows():
+    driver.get(row['url']) # Go to url of the program
+
+    try:
+        info = driver.find_element_by_class_name('bounty-content')
+        info_dict[row['name']] = info.text
+    except:
+        info = ''
+        info_dict[row['name']] = info
+
+
+#%%
+# Quit webdriver
+driver.quit()
 
 
 
