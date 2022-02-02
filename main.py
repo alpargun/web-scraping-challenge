@@ -63,13 +63,12 @@ min_amounts = []
 max_amounts = []
 
 for key in info_dict:
-    print(key)
     dollars = [x[0] for x in re.findall('(\$[0-9]+(\,[0-9]+)?)', info_dict[key])]
 
     # Remove '$' and ',' from amounts    
     for idx, val in enumerate(dollars):
         dollars[idx] = float(val.replace('$', '').replace(',', ''))
-    print(dollars)
+
     # Find min and max values
     if dollars:
         min_amounts.append(np.min(dollars))
@@ -78,14 +77,14 @@ for key in info_dict:
         min_amounts.append(np.nan)
         max_amounts.append(np.nan)  
 
-# Add max and min amounts to the table
+# Add max and min amounts as new columns to the table
 table['MinBounty'] = min_amounts
 table['MaxBounty'] = max_amounts
 
 table.to_pickle('final-table.pkl') # pickle to access the results anytime
-
 table
 
+#--------------------------------------------------------------------------------
 #%% STEP 4: Result Processing
 # Histogram graph for min and max amounts
 
