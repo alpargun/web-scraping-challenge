@@ -49,6 +49,8 @@ for index, row in df.iterrows():
     info = driver.find_element(By.CLASS_NAME, 'bounty-content')
     info_dict[row['Name']] = info.text
 
+# Quit webdriver
+driver.quit()
 
 #--------------------------------------------------------------------------------
 #%% STEP 3: Data Analysis
@@ -80,23 +82,22 @@ for key in info_dict:
 table['MinBounty'] = min_amounts
 table['MaxBounty'] = max_amounts
 
+table.to_pickle('final-table.pkl') # pickle to access the results anytime
+
+table
 
 #%% STEP 4: Result Processing
 # Histogram graph for min and max amounts
 
-import plotly.express as px
-
-px.histogram(table, x="MinBounty")
+import plotly.express as px # Use plotly to obtain interactive plots
 
 
+final_df = pd.read_pickle('final-table.pkl') 
 
+# Minimum Dollar Amounts
+fig_min = px.histogram(final_df, x="MinBounty", color='Name', title='Histogram of Minimum Dollar Amounts')
+fig_min.show()
 
-
-#%%
-# Quit webdriver
-driver.quit()
-
-
-
-
-# %%
+# Maximum Dollar Amounts
+fig_max = px.histogram(final_df, x="MaxBounty", color='Name', title='Histogram of Maximum Dollar Amounts')
+fig_max.show()
