@@ -36,9 +36,9 @@ from selenium.webdriver.common.by import By
 import time
 
 # Download webdriver for a browser and add its path
-driver = webdriver.Chrome(executable_path='/Users/alp/Desktop/chromedriver')
+driver = webdriver.Chrome(executable_path='/Users/alp/Desktop/chromedriver') # e.g. for Chrome, download from https://chromedriver.chromium.org/downloads
 
-df = pd.read_csv('data/program-list.csv') # read again to comply with the task
+df = pd.read_csv('data/program-list.csv') # read data from csv again to comply with the task
 
 info_dict = dict() # Keep the info as a dictionary to see corresponding program name for convenience
 
@@ -100,3 +100,5 @@ fig_min.show()
 # Maximum Dollar Amounts
 fig_max = px.histogram(final_df, x="MaxBounty", color='Name', title='Histogram of Maximum Dollar Amounts')
 fig_max.show()
+
+# %%
