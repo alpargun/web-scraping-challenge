@@ -22,8 +22,8 @@ for idx, val in enumerate(parsed_json['programs']):
 
 # Add names and urls to a dataframe and convert to csv
 table = pd.DataFrame()
-table['name'] = p_names
-table['url'] = p_urls
+table['Name'] = p_names
+table['URL'] = p_urls
 table.to_csv('data/program-list.csv', index=False)
 
 
@@ -37,18 +37,17 @@ import time
 
 # Download webdriver for a browser and add its path
 driver = webdriver.Chrome(executable_path='/Users/alp/Desktop/chromedriver')
-driver.page_source.encode('utf-8') # set charset to utf-8
 
 df = pd.read_csv('data/program-list.csv') # read again to comply with the task
 
 info_dict = dict() # Keep the info as a dictionary to see corresponding program name for convenience
 
 for index, row in df.iterrows():
-    driver.get(row['url']) # Go to url of the program
+    driver.get(row['URL']) # Go to url of the program
 
     time.sleep(0.2) # wait to load all content
     info = driver.find_element(By.CLASS_NAME, 'bounty-content')
-    info_dict[row['name']] = info.text
+    info_dict[row['Name']] = info.text
 
 
 #--------------------------------------------------------------------------------
@@ -56,20 +55,38 @@ for index, row in df.iterrows():
 # Read program information and extract min and max dollar amounts. 
 
 import re
+import numpy as np
+
+min_amounts = []
+max_amounts = []
 
 for key in info_dict:
     print(key)
     dollars = [x[0] for x in re.findall('(\$[0-9]+(\,[0-9]+)?)', info_dict[key])]
+
+    # Remove '$' and ',' from amounts    
+    for idx, val in enumerate(dollars):
+        dollars[idx] = float(val.replace('$', '').replace(',', ''))
     print(dollars)
+    # Find min and max values
+    if dollars:
+        min_amounts.append(np.min(dollars))
+        max_amounts.append(np.max(dollars))
+    else:
+        min_amounts.append(np.nan)
+        max_amounts.append(np.nan)  
+
+# Add max and min amounts to the table
+table['MinBounty'] = min_amounts
+table['MaxBounty'] = max_amounts
 
 
-# TODO keep max and min amounts in table
+#%% STEP 4: Result Processing
+# Histogram graph for min and max amounts
 
+import plotly.express as px
 
-
-
-
-
+px.histogram(table, x="MinBounty")
 
 
 
